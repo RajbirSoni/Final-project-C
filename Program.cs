@@ -87,13 +87,97 @@ namespace ConnectFourGame
 
                for (int col = 0 ; col < 7 ; col++ )
                {
-                    Console.Write ($"{grid[row,col]}|")
+                    Console.Write ($"{grid[row,col]}|");
                }
                Console.WriteLine();
             }
-            Console.WriteLine("--------------");
+            Console.WriteLine("---------------");
             Console.WriteLine("0 1 2 3 4 5 6");
             Console.WriteLine();
         }
-     }
+     
+
+public bool IsFull()
+{
+    for(int col= 0; col<7; col++)
+    {
+        if(grid[0,col] == ' ') return false;
+    }
+    return true;
+}  
+public bool CheckWin(char symbol) 
+{
+    //Horizontal 
+    for (int row= 0; row < 6; row++)
+        for(int col= 0; col < 4 ; col++)
+            if(grid[row , col] == symbol && grid[row , col+1] == symbol && grid[row , col+2] == symbol && grid[row , col+3]==symbol)
+                return true;
+    //Vertical
+    for (int col= 0; col < 7; col++)
+        for(int row= 0; row < 3 ; row++)
+            if(grid[row , col] == symbol && grid[row+1 , col] == symbol && grid[row+2 , col] == symbol && grid[row+3 , col]==symbol)
+                return true;
+    //Diagonal 1
+    for (int row= 3; row < 6; row++)
+        for(int col= 0; col < 4 ; col++)
+            if(grid[row , col] == symbol && grid[row-1 , col+1] == symbol && grid[row-2 , col+2] == symbol && grid[row-3 , col+3]==symbol)
+                return true;
+    //Diagonal 2
+    for (int row= 3; row < 6; row++)
+        for(int col= 3; col < 7 ; col++)
+            if(grid[row , col] == symbol && grid[row-1 , col-1] == symbol && grid[row-2 , col-2] == symbol && grid[row-3 , col-3]==symbol)
+                return true;
+
+    return false;
+  }
 }
+//Game Controller 
+class GameController
+{
+    private Player player1;
+    private Player player2;
+    private Board board;
+
+    public GameController(Player p1, Player p2)
+    {
+        player1 = p1;
+        player2 = p2;
+        board = new Board();
+    }
+
+    public void PlayGame()
+    {
+        Player current = player1;
+        while(true)
+        {
+            board.PrintBoard();
+            current.MakeMove(board);
+            if(board.CheckWin(current.Symbol))
+            {
+                board.PrintBoard();
+                Console.WriteLine($"{current.Name} ({current.Symbol}) wins!");
+                break;
+            }
+            if (board.IsFull())
+            {
+                board.PrintBoard();
+                Console.WriteLine("Its a draw!");
+                break;
+            }
+            current = (current == player1) ? player2 : player1;
+        }
+    }
+
+    public static void Main()
+    {
+        Console.WriteLine("Welcome to Connect Four!");
+        Player p1= new HumanPlayer("Rajbir" , 'X');
+        Player p2 = new HumanPlayer ("Sejal" , 'O');
+
+        GameController game = new GameController(p1,p2);
+        game.PlayGame();
+    }
+}
+    
+}
+
